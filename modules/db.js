@@ -43,20 +43,21 @@ var User = mongoose.model('User', userSchema);
 
 var _public = {};
 
-_public.getUsers = function() {
+_public.getLeaders = function() {
     return new Promise(function(resolve, reject) {
-        User.find({}, function(err, users) {
+        User.find({}, function(err, leaders) {
             if(err) reject(err);
-            resolve(users);
-            console.log('there are ' + users.length + ' users', users);
+            resolve(leaders);
+            console.log('there are ' + leaders.length + ' users', leaders);
         });
 
     });
 }
-_public.getUsers();
+// get data
+//_public.getLeaders();
 
 _public.resetGiveCounts = function() {
-    _public.getUsers().then(function(users) {
+    _public.getLeaders().then(function(users) {
             users.forEach(function(user) {
                 User.update({userId: user.userId}, {giveCount: 0}, {}, function(err, doc) {
                     

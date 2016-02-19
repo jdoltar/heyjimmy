@@ -55,24 +55,41 @@
                     <paper-menu id="emojiSelectMenu" class="dropdown-content"
                                 attr-for-selected="value" selected="{{emojiFilter}}">
                         <paper-item value="">No filter</paper-item>
-                        <template is="dom-repeat" as="emoji" items="{{emojis}}">
-                            <paper-item value="{{emoji}}">{{emoji}}</paper-item>
+                        <template is="dom-repeat" as="emoji" items="{{emojiSet}}">
+                            <paper-item value="{{emoji}}">
+                                <div class="layout horizontal center">
+                                    <emoji-icon
+                                            class="mr-lg"
+                                            icon="{{emoji}}"
+                                            emoji-list="{{customEmojiList.emoji}}">
+                                    </emoji-icon>
+                                    <div class="flex">:{{emoji}}:</div>
+                                </div>
+                            </paper-item>
                         </template>
                     </paper-menu>
                 </paper-dropdown-menu>
+
+                <!-- Display the selected emoji filter -->
+                <div class="emoji-filter-display self-end">
+                    <emoji-icon
+                            icon="{{emojiFilter}}"
+                            emoji-list="{{customEmojiList.emoji}}">
+                    </emoji-icon>
+                </div>
 
             </div>
         </iron-collapse>
 
         <div class="layout vertical">
 
-            <template is="dom-repeat" items={{users}} as="user">
+            <template is="dom-repeat" items={{leaders}} as="leader">
                 <div class="layout horizontal leader-row">
-                    <img src$="[[userImage(user.userId, userList)]]">
-                    <span>[[userName(user.userId, userList)]]</span>
-                    <span>{{user.badges.length}}</span>
+                    <img src$="[[userImage(leader.userId, userList)]]">
+                    <span>[[userName(leader.userId, userList)]]</span>
+                    <span>{{leader.badges.length}}</span>
                     
-                    <template is="dom-repeat" items={{user.badges}} as="badge">
+                    <template is="dom-repeat" items={{leader.badges}} as="badge">
                         <emoji-icon
                                 id$="emoji{{badge.id}}"
                                 icon="{{badge.badge}}"
@@ -94,10 +111,9 @@
 
 
         <iron-ajax auto method="GET"
-                url="/users"
-                params="{{logParams}}"
+                url="/leaders"
                 handle-as="json"
-                last-response="{{users}}"
+                last-response="{{leaders}}"
                 debounce-duration="300"
                 loading="{{loading}}">
         </iron-ajax>
@@ -133,6 +149,7 @@
                 duration="4000"
                 class="success-toast">
         </paper-toast>
+
         <paper-toast
                 id="toastError"
                 text="{{errorMessage}}"
@@ -151,6 +168,10 @@
                 properties: {
                     team: {
                         type: String
+                    },
+                    leaders: {
+                        type: Object,
+                        observer: 'leadersChanged'
                     }
                 },
                 created: function() {
@@ -159,6 +180,23 @@
                 ready: function() {
                     var that = this;
                 },
+                leadersChanged: function(leaders) {
+                    console.log('leaders', leaders);
+
+                    // cycle through leaders and get a set of all emojis used
+                    var emojiSet = [];
+                    leaders.forEach(function(leader) {
+                        leader.badges.forEach(function(badge) {
+                            emojiSet.push(badge.badge);
+                        });
+                    });
+                    // remove duplicates in the set
+                    emojiSet = this.toUniqueSet(emojiSet);
+
+                    //data bind the array
+                    this.set('emojiSet', emojiSet)
+
+                }
             });
         })();
     </script>

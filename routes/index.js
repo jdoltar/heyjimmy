@@ -12,9 +12,9 @@ router.get('/', function(req, res, next) {
 
 
 /* GET users and badges */
-router.get('/users', function(req, res, next) {
-    db.getUsers().then(function(users) {
-        res.send(users);
+router.get('/leaders', function(req, res, next) {
+    db.getLeaders().then(function(leaders) {
+        res.send(leaders);
 
     }, function(err) {
 
