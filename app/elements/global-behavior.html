@@ -1,0 +1,54 @@
+<!--
+    Jon Doltar
+    2016-02
+-->
+
+<script>
+var HeyJimmyBehaviors = HeyJimmyBehaviors || {};
+HeyJimmyBehaviors.GlobalBehavior = {
+
+    properties: {
+
+    },
+
+    created: function() {
+
+    },
+
+    ready: function () {
+
+    },
+    // loop through user list and return users name
+    // if we couldn't find it then just return the id
+    userName: function(id, userList) {
+        for(var i = 0; i < userList.length; i++) {
+            if(userList[i].id === id) return userList[i].name
+        }
+        return id;
+    },
+    // loop through user list and return users image
+    userImage: function(id, userList) {
+        for(var i = 0; i < userList.length; i++) {
+            if(userList[i].id === id) {
+                return userList[i].profile.image_32;
+            }
+        }
+        return '';
+    },
+    // loop through channel list and return channel name
+    channelName: function(id, channelList) {
+        for(var i = 0; i < channelList.length; i++) {
+            if(channelList[i].id === id) return channelList[i].name
+        }
+        return id;
+    },
+    toString: function(obj) {
+        return JSON.stringify(obj, null, 4);
+    },
+    formatTimestamp: function (timestamp) {
+        var date = new Date(timestamp);
+        return date.toDateString() + ' ' + date.toLocaleTimeString();
+    },
+
+};
+</script>

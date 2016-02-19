@@ -1,0 +1,165 @@
+<!--
+    Jon Doltar
+    2016-01
+    ESP-DLUX Client
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<!-- External styles for this element -->
+<link rel="import" href="../styles/leader-board-style.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+
+<dom-module id="leader-board">
+    <!-- Include the external styles for this element -->
+    <style is="custom-style" include="leader-board-style"></style>
+    <!-- /*<style is="custom-style" include="iron-flex-layout"></style>*/ -->
+    <template>
+        <h1 id="testt">Leaderboard</h1>
+
+        <!-- page controls -->
+        <div class="layout horizontal end-justified mt">
+            <!-- <div class="flex self-start page-title-text">Logs</div> -->
+            <div class="layout horizontal-reverse center end-justifed wrap">
+
+                <paper-button class="mb-lg" toggles raised 
+                        active="{{filterActive}}">Filter Tools</paper-button>
+
+                <paper-button class="mb-lg" on-tap="clearFilters"
+                        hidden$="{{!filterActive}}">Clear filters</paper-button>
+
+                <paper-spinner active="{{loading}}" class="mr-lg"></paper-spinner>
+
+            </div>
+            
+        </div>
+
+        <iron-collapse opened="{{filterActive}}">
+
+            <div class="layout horizontal-reverse wrap start-justified mv-lg">
+
+                <!-- User filter -->
+                <paper-dropdown-menu label="Filter by awarder" class="filter-field mh">
+                    <paper-menu id="awarderSelectMenu" class="dropdown-content"
+                                attr-for-selected="value" selected="{{awarderFilter}}">
+                        <paper-item value="">No filter</paper-item>
+                        <template is="dom-repeat" items="{{userList}}" as="awarder">
+                            <paper-item value="{{awarder.id}}">[[userName(awarder.id, userList)]]</paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-dropdown-menu>
+
+                <!-- Emoji filter -->
+                <paper-dropdown-menu label="Filter by emoji" class="filter-field mh">
+                    <paper-menu id="emojiSelectMenu" class="dropdown-content"
+                                attr-for-selected="value" selected="{{emojiFilter}}">
+                        <paper-item value="">No filter</paper-item>
+                        <template is="dom-repeat" as="emoji" items="{{emojis}}">
+                            <paper-item value="{{emoji}}">{{emoji}}</paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-dropdown-menu>
+
+            </div>
+        </iron-collapse>
+
+        <div class="layout vertical">
+
+            <template is="dom-repeat" items={{users}} as="user">
+                <div class="layout horizontal leader-row">
+                    <img src$="[[userImage(user.userId, userList)]]">
+                    <span>[[userName(user.userId, userList)]]</span>
+                    <span>{{user.badges.length}}</span>
+                    
+                    <template is="dom-repeat" items={{user.badges}} as="badge">
+                        <emoji-icon
+                                id$="emoji{{badge.id}}"
+                                icon="{{badge.badge}}"
+                                emoji-list="{{customEmojiList.emoji}}">
+                        </emoji-icon>
+                        <paper-tooltip for$="emoji{{badge.id}}" position="bottom">
+                            <div>Awarded by: [[userName(badge.userFrom, userList)]]</div>
+                            <div>In Channel: #[[channelName(badge.channel, channelList)]]</div>
+                            <div>Timestamp: [[formatTimestamp(badge.timestamp)]]</div>
+
+                        </paper-tooltip>
+                        
+                    </template>
+                </div>
+                
+            </template>
+        </div>
+        <content></content>
+
+
+        <iron-ajax auto method="GET"
+                url="/users"
+                params="{{logParams}}"
+                handle-as="json"
+                last-response="{{users}}"
+                debounce-duration="300"
+                loading="{{loading}}">
+        </iron-ajax>
+
+        <iron-ajax auto method="GET"
+                url="/emoji-list"
+                handle-as="json"
+                last-response="{{customEmojiList}}"
+                debounce-duration="300"
+                loading="{{loading}}">
+        </iron-ajax>
+
+        <iron-ajax auto method="GET"
+                url="/user-list"
+                handle-as="json"
+                last-response="{{userList}}"
+                debounce-duration="300"
+                loading="{{loading}}">
+        </iron-ajax>
+
+        <iron-ajax auto method="GET"
+                url="/channel-list"
+                handle-as="json"
+                last-response="{{channelList}}"
+                debounce-duration="300"
+                loading="{{loading}}">
+        </iron-ajax>
+
+
+        <paper-toast
+                id="toastSuccess"
+                text="{{successMessage}}"
+                duration="4000"
+                class="success-toast">
+        </paper-toast>
+        <paper-toast
+                id="toastError"
+                text="{{errorMessage}}"
+                duration="4000"
+                class="error-toast">
+        </paper-toast>
+
+    </template>
+    <script>
+        (function () {
+            'use strict';
+
+            Polymer({
+                is: 'leader-board',
+                behaviors: [HeyJimmyBehaviors.GlobalBehavior],
+                properties: {
+                    team: {
+                        type: String
+                    }
+                },
+                created: function() {
+
+                },
+                ready: function() {
+                    var that = this;
+                },
+            });
+        })();
+    </script>
+</dom-module>
