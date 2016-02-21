@@ -1,5 +1,5 @@
 var SlackBot = require('slackbots');
-var db = require('./db');
+var db = require('./db-pg');
 
 var Slack = require('slack-node');
 apiToken = "xoxp-21319597619-21323087526-21515344294-55cbf9602a";
@@ -42,13 +42,17 @@ bot.on('message', function(message) {
     //     icon_emoji: ':cat:'
     // };
     // bot.postMessageToChannel('general', message.text, params);
+
+
+    // check if message has text
+    // TODO check if message was edited or not
     if(message.text) {
         // process message and get a list of jobs, users awarding badges
-        var jobs = getJobs(message)
-        if(jobs.length) {
+        var badges = extractBadges(message)
+        if(badges.length) {
             // persist the new data to the database
-            jobs.forEach(function(job) {
-                db.process(job);
+            badges.forEach(function(badge) {
+                db.saveBadge(badge);
             });
         }
     }
@@ -57,23 +61,20 @@ bot.on('message', function(message) {
 
 
 // parse incoming message and detect if any badges are being given
-function getJobs(message) {
+function extractBadges(message) {
     // capture each time user award somebody badges in this message
     var candidatesRegex = /\B<@(?:[a-zA-Z0-9]+)>\:?\s*(?:(?:\s*\:[a-zA-Z0-9_-]+\:\s*)*)/g;
     var candidates = message.text.match(candidatesRegex);
 
     // if no one awarded someone in this message, just return an empty array
-    var results = [];
-    if(!candidates) return results;
+    var badges = [];
+    if(!candidates) return badges;
     candidates.forEach(function(candidate) {
         // separate username and badges from entire capture
         var splitCandidateRegex = /\B<@([a-zA-Z0-9]+)>\:?\s*((?:\s*\:[a-zA-Z0-9_-]+\:\s*)*)/g;
         var match = splitCandidateRegex.exec(candidate);
         if(match) {
-            var item = {};
-            item.userFrom = message.user;
-            item.userTo = match[1];
-            // remove white space
+            // remove white space from badge string
             var badgeString = match[2].replace(/\s+/g,'');
             // remove skin tone variations, we don't have css icons for them
             // and they will screw up split in next step
@@ -82,24 +83,22 @@ function getJobs(message) {
             badgeString = badgeString.substr(1);
             badgeString = badgeString.substring(0, badgeString.length - 1);
             // split into array of all emoji codes without the colons
-            var badges = badgeString.split('::');
-            // take individual badge and add meta data to it
-            item.badges = [];
-            badges.forEach(function(badge) {
-                item.badges.push({
-                    id: generateId(10),
-                    badge: badge,
+            var badgeIcons = badgeString.split('::');
+            // take individual emoji icons and create badge objects
+            badgeIcons.forEach(function(badge) {
+                //badge.icon, badge.userTo, badge.userFrom, badge.channel, badge.team
+                badges.push({
+                    icon: badge,
+                    userTo: match[1],
                     userFrom: message.user,
                     channel: message.channel,
-                    timestamp: convertDate(message.ts)
+                    team: teamInfo.id
                 })
             });
-            // push the processed item into results
-            results.push(item);
         }
         
     });
-    return results;
+    return badges;
     
 }
 
@@ -114,8 +113,7 @@ function convertDate(slackTime) {
     return date || new Date();
 }
 
-function generateId(length)
-{
+function generateId(length) {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -124,6 +122,20 @@ function generateId(length)
 
     return text;
 }
+
+function getTeamInfo() {
+    return new Promise(function(resolve, reject){
+        slack.api("team.info", function(err, teamInfo) {
+            if(err) reject(err);
+            else resolve(teamInfo.team);
+        });
+
+    });
+}
+var teamInfo;
+getTeamInfo().then(function(info) {
+    teamInfo = info;
+});
 
 module.exports.getEmojiList = function() {
     return new Promise(function(resolve, reject){

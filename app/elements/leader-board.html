@@ -16,7 +16,7 @@
     <style is="custom-style" include="leader-board-style"></style>
     <!-- /*<style is="custom-style" include="iron-flex-layout"></style>*/ -->
     <template>
-        <h1 id="testt">Leaderboard</h1>
+        <h1>Leaderboard</h1>
 
         <!-- page controls -->
         <div class="layout horizontal end-justified mt">
@@ -85,17 +85,17 @@
 
             <template is="dom-repeat" items={{leaders}} as="leader">
                 <div class="layout horizontal leader-row">
-                    <img src$="[[userImage(leader.userId, userList)]]">
-                    <span>[[userName(leader.userId, userList)]]</span>
+                    <img src$="[[userImage(leader.userTo, userList)]]">
+                    <span>[[userName(leader.userTo, userList)]]</span>
                     <span>{{leader.badges.length}}</span>
                     
                     <template is="dom-repeat" items={{leader.badges}} as="badge">
                         <emoji-icon
-                                id$="emoji{{badge.id}}"
-                                icon="{{badge.badge}}"
+                                id="[[toTemplateId(badge.id)]]"
+                                icon="{{badge.icon}}"
                                 emoji-list="{{customEmojiList.emoji}}">
                         </emoji-icon>
-                        <paper-tooltip for$="emoji{{badge.id}}" position="bottom">
+                        <paper-tooltip for="[[toTemplateId(badge.id)]]" position="bottom">
                             <div>Awarded by: [[userName(badge.userFrom, userList)]]</div>
                             <div>In Channel: #[[channelName(badge.channel, channelList)]]</div>
                             <div>Timestamp: [[formatTimestamp(badge.timestamp)]]</div>
@@ -196,6 +196,10 @@
                     //data bind the array
                     this.set('emojiSet', emojiSet)
 
+                },
+                // html id's need to start with letter
+                toTemplateId: function(id) {
+                    return 'b' + id;
                 }
             });
         })();
