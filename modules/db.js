@@ -67,7 +67,6 @@ db.checkGiveCount = function(badge) {
         // get last midnight
         var date = new Date();
         date.setHours(0,0,0,0);
-        console.log('getting give count', date);
 
         // get a client from the connection pool
         pg.connect(conn_obj, function(err, client, done) {
@@ -191,7 +190,6 @@ db.getBadges= function(params) {
 // It includes all the badges they have
 db.getLeaders = function(params) {
     return new Promise(function(resolve, reject) {
-        console.log('getting leaders');
         var leaders;
 
         async.series([

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var path = require('path');
-var db = require('../modules/db-pg');
+var db = require('../modules/db');
 var bot = require('../modules/bot');
 
 /* GET home page */
@@ -13,9 +13,8 @@ router.get('/', function(req, res, next) {
 
 /* GET users and badges */
 router.get('/leaders', function(req, res, next) {
-    db.getLeaders().then(function(leaders) {
-        console.log('sending leaders', leaders);
-        res.send(leaders);
+    db.getLeaders().then(function(data) {
+        res.send(data);
 
     }, function(err) {
         console.log('could get leaders', err);
@@ -25,22 +24,22 @@ router.get('/leaders', function(req, res, next) {
 /* GET badges */
 router.get('/badges', function(req, res, next) {
 
-    console.log('getting badges - route');
-    db.getBadges().then(function(badges) {
-        res.send(badges);
+    db.getBadges().then(function(data) {
+        res.send(data);
 
     }).catch(function(err) {
-        console.log('could get badges', err);
+        console.log('could not get badges', err);
         next(err);
     });;
 });
 
 /* GET custom emoji list */
 router.get('/emoji-list', function(req, res, next) {
-    bot.getEmojiList().then(function(emojiList) {
-        res.send(emojiList);
+    bot.getEmojiList().then(function(data) {
+        res.send(data);
 
     }, function(err) {
+        console.log('could not get emoji list', err);
 
     });
 });
@@ -48,10 +47,11 @@ router.get('/emoji-list', function(req, res, next) {
 
 /* GET user list */
 router.get('/user-list', function(req, res, next) {
-    bot.getUserList().then(function(emojiList) {
-        res.send(emojiList);
+    bot.getUserList().then(function(data) {
+        res.send(data);
 
     }, function(err) {
+        console.log('could not get user list', data);
 
     });
 });
@@ -59,21 +59,11 @@ router.get('/user-list', function(req, res, next) {
 
 /* GET channel list */
 router.get('/channel-list', function(req, res, next) {
-    bot.getChannelList().then(function(channelList) {
-        res.send(channelList);
+    bot.getChannelList().then(function(data) {
+        res.send(data);
 
     }, function(err) {
-
-    });
-});
-
-/* GET channel list */
-router.get('/givecount', function(req, res, next) {
-    db.getGiveCount('U0M9H2KFG').then(function(giveCount) {
-        res.send(giveCount);
-
-    }, function(err) {
-
+        console.log('could not get channel list', data);
     });
 });
 

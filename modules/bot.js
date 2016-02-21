@@ -1,5 +1,5 @@
 var SlackBot = require('slackbots');
-var db = require('./db-pg');
+var db = require('./db');
 
 var Slack = require('slack-node');
 apiToken = "xoxp-21319597619-21323087526-21515344294-55cbf9602a";
@@ -160,7 +160,6 @@ module.exports.getUserList = function() {
 module.exports.getChannelList = function() {
     return new Promise(function(resolve, reject){
         slack.api("channels.list", function(err, channelList) {
-            console.log('channelList', channelList);
             if(err) reject(err);
             else resolve(channelList.channels);
         });
