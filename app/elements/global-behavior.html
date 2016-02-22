@@ -30,7 +30,8 @@ HeyJimmyBehaviors.GlobalBehavior = {
     userImage: function(id, userList) {
         for(var i = 0; i < userList.length; i++) {
             if(userList[i].id === id) {
-                return userList[i].profile.image_32;
+                console.log(userList[i].profile);
+                return userList[i].profile.image_72;
             }
         }
         return '';

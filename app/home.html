@@ -68,7 +68,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <span id="browser-sync-binding"></span>
     <template is="dom-bind" id="app">
 
-        <paper-drawer-panel id="paperDrawerPanel">
+        <paper-drawer-panel id="paperDrawerPanel" force-narrow>
             <!-- Drawer Scroll Header Panel -->
             <paper-scroll-header-panel drawer fixed>
 
@@ -100,20 +100,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
                 <!-- Main Toolbar -->
                 <paper-toolbar id="mainToolbar" class="tall">
-                    <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                    <!-- <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button> -->
 
                     <span class="space"></span>
-
-                    <!-- Toolbar icons -->
-                    <paper-icon-button icon="refresh"></paper-icon-button>
-                    <paper-icon-button icon="search"></paper-icon-button>
 
                     <!-- Application name -->
                     <div class="middle middle-container">
                         <div class="app-name">
                             <div class="layout horizontal center">
-                                <!-- <img src="https://emoji.slack-edge.com/T02SDD19C/jimmy/3a8b1002c262353f.png"> -->
-                                <div>@heyjimmy</div>
+                                <img src="https://emoji.slack-edge.com/T02SDD19C/jimmy/3a8b1002c262353f.png">
+                                <div>@heyjimmy Leaderboard</div>
                             </div>
                         </div>
                     </div>

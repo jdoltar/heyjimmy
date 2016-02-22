@@ -16,93 +16,82 @@
     <style is="custom-style" include="leader-board-style"></style>
     <!-- /*<style is="custom-style" include="iron-flex-layout"></style>*/ -->
     <template>
-        <h1>Leaderboard</h1>
-
         <!-- page controls -->
-        <div class="layout horizontal end-justified mt">
-            <!-- <div class="flex self-start page-title-text">Logs</div> -->
-            <div class="layout horizontal-reverse center end-justifed wrap">
+        <div class="layout horizontal-reverse wrap start-justified mv-lg">
 
-                <paper-button class="mb-lg" toggles raised 
-                        active="{{filterActive}}">Filter Tools</paper-button>
+            <!-- User filter -->
+            <paper-dropdown-menu label="Filter by awarder" class="filter-field mh">
+                <paper-menu id="awarderSelectMenu" class="dropdown-content"
+                            attr-for-selected="value" selected="{{awarderFilter}}">
+                    <paper-item value="">No filter</paper-item>
+                    <template is="dom-repeat" items="{{userList}}" as="awarder">
+                        <paper-item value="{{awarder.id}}">[[userName(awarder.id, userList)]]</paper-item>
+                    </template>
+                </paper-menu>
+            </paper-dropdown-menu>
 
-                <paper-button class="mb-lg" on-tap="clearFilters"
-                        hidden$="{{!filterActive}}">Clear filters</paper-button>
+            <!-- Emoji filter -->
+            <paper-dropdown-menu label="Filter by emoji" class="filter-field mh">
+                <paper-menu id="emojiSelectMenu" class="dropdown-content"
+                            attr-for-selected="value" selected="{{emojiFilter}}">
+                    <paper-item value="">No filter</paper-item>
+                    <template is="dom-repeat" as="emoji" items="{{emojiSet}}">
+                        <paper-item value="{{emoji}}">
+                            <div class="layout horizontal center">
+                                <emoji-icon
+                                        class="mr-lg"
+                                        icon="{{emoji}}"
+                                        emoji-list="{{customEmojiList.emoji}}">
+                                </emoji-icon>
+                                <div class="flex">:{{emoji}}:</div>
+                            </div>
+                        </paper-item>
+                    </template>
+                </paper-menu>
+            </paper-dropdown-menu>
 
-                <paper-spinner active="{{loading}}" class="mr-lg"></paper-spinner>
-
+            <!-- Display the selected emoji filter -->
+            <div class="emoji-filter-display self-end">
+                <emoji-icon
+                        icon="{{emojiFilter}}"
+                        emoji-list="{{customEmojiList.emoji}}">
+                </emoji-icon>
             </div>
-            
+            <div class="filter-button">
+                <paper-button class="mb-lg" on-tap="clearFilters">
+                    Clear filters
+                </paper-button>
+            </div>
+
+            <paper-spinner active="{{loading}}" class="mr-lg"></paper-spinner>
+
         </div>
 
-        <iron-collapse opened="{{filterActive}}">
-
-            <div class="layout horizontal-reverse wrap start-justified mv-lg">
-
-                <!-- User filter -->
-                <paper-dropdown-menu label="Filter by awarder" class="filter-field mh">
-                    <paper-menu id="awarderSelectMenu" class="dropdown-content"
-                                attr-for-selected="value" selected="{{awarderFilter}}">
-                        <paper-item value="">No filter</paper-item>
-                        <template is="dom-repeat" items="{{userList}}" as="awarder">
-                            <paper-item value="{{awarder.id}}">[[userName(awarder.id, userList)]]</paper-item>
-                        </template>
-                    </paper-menu>
-                </paper-dropdown-menu>
-
-                <!-- Emoji filter -->
-                <paper-dropdown-menu label="Filter by emoji" class="filter-field mh">
-                    <paper-menu id="emojiSelectMenu" class="dropdown-content"
-                                attr-for-selected="value" selected="{{emojiFilter}}">
-                        <paper-item value="">No filter</paper-item>
-                        <template is="dom-repeat" as="emoji" items="{{emojiSet}}">
-                            <paper-item value="{{emoji}}">
-                                <div class="layout horizontal center">
-                                    <emoji-icon
-                                            class="mr-lg"
-                                            icon="{{emoji}}"
-                                            emoji-list="{{customEmojiList.emoji}}">
-                                    </emoji-icon>
-                                    <div class="flex">:{{emoji}}:</div>
-                                </div>
-                            </paper-item>
-                        </template>
-                    </paper-menu>
-                </paper-dropdown-menu>
-
-                <!-- Display the selected emoji filter -->
-                <div class="emoji-filter-display self-end">
-                    <emoji-icon
-                            icon="{{emojiFilter}}"
-                            emoji-list="{{customEmojiList.emoji}}">
-                    </emoji-icon>
-                </div>
-
-            </div>
-        </iron-collapse>
 
         <div class="layout vertical">
 
             <template is="dom-repeat" items={{leaders}} as="leader">
-                <div class="layout horizontal leader-row">
-                    <img src$="[[userImage(leader.userTo, userList)]]">
-                    <span>[[userName(leader.userTo, userList)]]</span>
-                    <span>{{leader.badges.length}}</span>
+                <div class="layout horizontal center around-justified leader-row">
+                    <div class="leader-rank">1</div>
+                    <div class="leader-avatar"><img src$="[[userImage(leader.userTo, userList)]]"></div>
+                    <div class="leader-name">@[[userName(leader.userTo, userList)]]</div>
                     
-                    <template is="dom-repeat" items={{leader.badges}} as="badge">
-                        <emoji-icon
-                                id="[[toTemplateId(badge.id)]]"
-                                icon="{{badge.icon}}"
-                                emoji-list="{{customEmojiList.emoji}}">
-                        </emoji-icon>
-                        <paper-tooltip for="[[toTemplateId(badge.id)]]" position="bottom">
-                            <div>Awarded by: [[userName(badge.userFrom, userList)]]</div>
-                            <div>In Channel: #[[channelName(badge.channel, channelList)]]</div>
-                            <div>Timestamp: [[formatTimestamp(badge.timestamp)]]</div>
-
-                        </paper-tooltip>
-                        
-                    </template>
+                    <div class="flex">
+                        <template is="dom-repeat" items={{leader.badges}} as="badge">
+                            <emoji-icon
+                                    id="[[toTemplateId(badge.id)]]"
+                                    icon="{{badge.icon}}"
+                                    emoji-list="{{customEmojiList.emoji}}">
+                            </emoji-icon>
+                            <paper-tooltip for="[[toTemplateId(badge.id)]]" position="bottom">
+                                <div>Awarded by: @[[userName(badge.userFrom, userList)]]</div>
+                                <div>In Channel: #[[channelName(badge.channel, channelList)]]</div>
+                                <div>Timestamp: [[formatTimestamp(badge.timestamp)]]</div>
+                            </paper-tooltip>
+                            
+                        </template>
+                    </div>
+                    <div class="leader-badge-count">{{leader.badges.length}}</div>
                 </div>
                 
             </template>
