@@ -72,7 +72,7 @@
 
             <template is="dom-repeat" items={{leaders}} as="leader">
                 <div class="layout horizontal center around-justified leader-row">
-                    <div class="leader-rank">1</div>
+                    <div class="leader-rank">[[displayRank(index)]]</div>
                     <div class="leader-avatar"><img src$="[[userImage(leader.userTo, userList)]]"></div>
                     <div class="leader-name">@[[userName(leader.userTo, userList)]]</div>
                     
@@ -189,6 +189,9 @@
                 // html id's need to start with letter
                 toTemplateId: function(id) {
                     return 'b' + id;
+                },
+                displayRank: function(index) {
+                    return index + 1;
                 }
             });
         })();
