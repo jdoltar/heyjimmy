@@ -22,7 +22,7 @@
             <!-- User filter -->
             <paper-dropdown-menu label="Filter by awarder" class="filter-field mh">
                 <paper-menu id="awarderSelectMenu" class="dropdown-content"
-                            attr-for-selected="value" selected="{{awarderFilter}}">
+                            attr-for-selected="value" selected="{{userFrom}}">
                     <paper-item value="">No filter</paper-item>
                     <template is="dom-repeat" items="{{userList}}" as="awarder">
                         <paper-item value="{{awarder.id}}">[[userName(awarder.id, userList)]]</paper-item>
@@ -33,7 +33,7 @@
             <!-- Emoji filter -->
             <paper-dropdown-menu label="Filter by emoji" class="filter-field mh">
                 <paper-menu id="emojiSelectMenu" class="dropdown-content"
-                            attr-for-selected="value" selected="{{emojiFilter}}">
+                            attr-for-selected="value" selected="{{icon}}">
                     <paper-item value="">No filter</paper-item>
                     <template is="dom-repeat" as="emoji" items="{{emojiSet}}">
                         <paper-item value="{{emoji}}">
@@ -101,6 +101,7 @@
 
         <iron-ajax auto method="GET"
                 url="/leaders"
+                params="{{leaderParams}}"
                 handle-as="json"
                 last-response="{{leaders}}"
                 debounce-duration="300"
@@ -158,9 +159,41 @@
                     team: {
                         type: String
                     },
+                    // declare here so we can observe when it changes
                     leaders: {
                         type: Object,
                         observer: 'leadersChanged'
+                    },
+                    // used by iron-ajax to submit query params
+                    leaderParams: {
+                        type: Object,
+                        computed: 'computeLeaderParams(timestamp, icon, userTo, userFrom, team)',
+                    },
+                    timestamp: {
+                        type: Object,
+                        // set default to begining of the month
+                        value: function() {
+                            var date = new Date();
+                            date.setDate(1);
+                            date.setHours(0, 0, 0, 0);
+                            return date;
+                        }
+                    },
+                    icon: {
+                        type: String,
+                        value: ''
+                    },
+                    userTo: {
+                        type: String,
+                        value: ''
+                    },
+                    userFrom: {
+                        type: String,
+                        value: ''
+                    },
+                    team: {
+                        type: String,
+                        value: ''
                     }
                 },
                 created: function() {
@@ -169,6 +202,28 @@
                 ready: function() {
                     var that = this;
                 },
+
+                // Compute query parameters:
+                //      timestamp       only fetch events before this
+                //      category        only fetch events of this category
+                //      address         only fetch events for this xbee
+                //      user_id         only fetch events for this user
+                //      size            number of records to fetch
+                //      skip            number of pages to skip
+                // This function acts as a trigger. If any of the parameters
+                // change then this will fire, which in turn causes iron-ajax
+                // to reload.
+                computeLeaderParams: function(timestamp, icon, userTo, userFrom, team) {
+                    console.log('computeLeaderParams', timestamp);
+                    return {
+                        timestamp: timestamp,
+                        icon: icon,
+                        userTo: userTo,
+                        userFrom: userFrom,
+                        team: team,
+                    };
+                },
+
                 leadersChanged: function(leaders) {
                     console.log('leaders', leaders);
 
@@ -176,14 +231,14 @@
                     var emojiSet = [];
                     leaders.forEach(function(leader) {
                         leader.badges.forEach(function(badge) {
-                            emojiSet.push(badge.badge);
+                            emojiSet.push(badge.icon);
                         });
                     });
                     // remove duplicates in the set
                     emojiSet = this.toUniqueSet(emojiSet);
 
                     //data bind the array
-                    this.set('emojiSet', emojiSet)
+                    this.set('emojiSet', emojiSet);
 
                 },
                 // html id's need to start with letter
@@ -192,6 +247,10 @@
                 },
                 displayRank: function(index) {
                     return index + 1;
+                },
+                clearFilters: function() {
+                    this.set('icon', '');
+                    this.set('userFrom', '');
                 }
             });
         })();

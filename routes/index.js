@@ -13,12 +13,21 @@ router.get('/', function(req, res, next) {
 
 /* GET users and badges */
 router.get('/leaders', function(req, res, next) {
-    db.getLeaders().then(function(data) {
-        res.send(data);
+    var timestamp ;
+    if(req.query.timestamp) timestamp = new Date(req.query.timestamp);
+    db.getLeaders({
+        timestamp: timestamp,
+        icon: req.query.icon,
+        userTo: req.query.userTo,
+        userFrom: req.query.userFrom,
+        team: req.query.team
+    })
+        .then(function(data) {
+            res.send(data);
 
-    }, function(err) {
-        console.log('could get leaders', err);
-    });
+        }, function(err) {
+            console.log('could not get leaders', err);
+        });
 });
 
 /* GET badges */

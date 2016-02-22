@@ -44,7 +44,7 @@ db.generateWhereClause= function(params) {
     }
     if (params.userFrom) {
         if (filter) filter += " AND ";
-        args.push(params.user_from);
+        args.push(params.userFrom);
         filter += 'user_from = $' + args.length;
     }
     if (params.userTo) {
@@ -139,9 +139,9 @@ db.getBadgeCountLeaders = function(params) {
         // get a client from the connection pool
         pg.connect(conn_obj, function(err, client, done) {
             if (err) return reject(err);
-            client.query('SELECT user_to AS "userTo", COUNT(user_to) FROM badges '
-                    + 'GROUP BY user_to '
-                    + where.filter + ' ORDER BY COUNT DESC ', where.args,
+            client.query('SELECT user_to AS "userTo", COUNT(user_to) '
+                + 'FROM badges ' + where.filter + 
+                ' GROUP BY user_to ORDER BY COUNT DESC ', where.args,
                 function(err, result) {
                     done();
                     if (err) return reject(err);
@@ -169,8 +169,8 @@ db.getBadges= function(params) {
             if (err) return reject(err);
             client.query('SELECT id, icon, user_to AS "userTo", '
                     + 'user_from AS "userFrom", channel, team, '
-                    + 'timestamp FROM badges '
-                    + where.filter + ' ORDER BY timestamp DESC ', where.args,
+                    + 'timestamp FROM badges ' + where.filter 
+                    + ' ORDER BY timestamp DESC ', where.args,
                 function(err, result) {
                     done();
                     if (err) return reject(err);
