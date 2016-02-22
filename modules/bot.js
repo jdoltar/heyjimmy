@@ -49,12 +49,8 @@ bot.on('message', function(message) {
     if(message.text) {
         // process message and get a list of jobs, users awarding badges
         var badges = extractBadges(message)
-        if(badges.length) {
-            // persist the new data to the database
-            badges.forEach(function(badge) {
-                db.saveBadge(badge);
-            });
-        }
+        db.saveBadges(badges);
+        
     }
     
 });

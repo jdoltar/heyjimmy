@@ -76,6 +76,7 @@ db.checkGiveCount = function(badge) {
                 function(err, result) {
                     done();
                     if (!err) {
+                        console.log('result.rowCount', result.rowCount);
                         // if user is allowed to give more badges
                         // then resolve the badge
                         if(result.rowCount < 5) {
@@ -121,6 +122,21 @@ db._saveBadge = function(badge) {
 // Save an individual badge to the database but checks give count first
 db.saveBadge = function(badge) {
     return db.checkGiveCount(badge).then(db._saveBadge);
+};
+
+// Save an arry of badges serially.
+db.saveBadges = function(badges) {
+    console.log('saving badges'
+    // reduce badge array and create promise chain of saveBadge() calls
+    var promiseChain = badges.reduce(function(prevTaskPromise, badge) {
+        return prevTaskPromise.then(function() {
+            return db.saveBadge(badge);
+        });
+    }, Promise.resolve()); // promiseChain root
+
+    return promiseChain;
+
+
 };
 
 
