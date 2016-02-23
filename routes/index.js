@@ -13,8 +13,9 @@ router.get('/', function(req, res, next) {
 
 /* GET users and badges */
 router.get('/leaders', function(req, res, next) {
-    var timestamp ;
+    var timestamp;
     if(req.query.timestamp) timestamp = new Date(req.query.timestamp);
+
     db.getLeaders({
         timestamp: timestamp,
         icon: req.query.icon,

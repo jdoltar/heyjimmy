@@ -126,7 +126,7 @@ db.saveBadge = function(badge) {
 
 // Save an arry of badges serially.
 db.saveBadges = function(badges) {
-    console.log('saving badges'
+    console.log('saving badges');
     // reduce badge array and create promise chain of saveBadge() calls
     var promiseChain = badges.reduce(function(prevTaskPromise, badge) {
         return prevTaskPromise.then(function() {

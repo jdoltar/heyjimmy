@@ -16,10 +16,18 @@
     <style is="custom-style" include="leader-board-style"></style>
     <!-- /*<style is="custom-style" include="iron-flex-layout"></style>*/ -->
     <template>
-        <!-- page controls -->
+        <!-- filter controls -->
         <div class="layout horizontal-reverse wrap start-justified mv-lg">
 
-            <!-- User filter -->
+            <paper-listbox class="layout horizontal" on-iron-select="dateFilterChanged"
+                            attr-for-selected="value" selected="{{timestamp}}">
+                <paper-item value="today">Today</paper-item>
+                <paper-item value="week">Week</paper-item>
+                <paper-item value="month">Month</paper-item>
+                <paper-item value="">All Time</paper-item>
+            </paper-listbox>
+
+            <!-- userFrom filter (awarder) -->
             <paper-dropdown-menu label="Filter by awarder" class="filter-field mh">
                 <paper-menu id="awarderSelectMenu" class="dropdown-content"
                             attr-for-selected="value" selected="{{userFrom}}">
@@ -30,7 +38,7 @@
                 </paper-menu>
             </paper-dropdown-menu>
 
-            <!-- Emoji filter -->
+            <!-- icon filter -->
             <paper-dropdown-menu label="Filter by emoji" class="filter-field mh">
                 <paper-menu id="emojiSelectMenu" class="dropdown-content"
                             attr-for-selected="value" selected="{{icon}}">
@@ -171,13 +179,7 @@
                     },
                     timestamp: {
                         type: Object,
-                        // set default to begining of the month
-                        value: function() {
-                            var date = new Date();
-                            date.setDate(1);
-                            date.setHours(0, 0, 0, 0);
-                            return date;
-                        }
+                        value: 'month'
                     },
                     icon: {
                         type: String,
@@ -214,9 +216,29 @@
                 // change then this will fire, which in turn causes iron-ajax
                 // to reload.
                 computeLeaderParams: function(timestamp, icon, userTo, userFrom, team) {
-                    console.log('computeLeaderParams', timestamp);
+
+                    // convert today, month, week aliases to actual dates
+                    var date = new Date();
+                    //all dates are at midnight
+                    date.setHours(0, 0, 0, 0);
+                    switch(timestamp) {
+                        case 'today':
+                            break;
+                        case 'week':
+                            date.setDate(date.getDate() - date.getDay()); 
+                            break;
+                        case 'month':
+                            date.setDate(1);
+                            break;
+                        // anything else becomes 'all time' (no time constraint)
+                        default:
+                            // db will ignore date if its undefined
+                            console.log('allllllll tiiiiiiiiiiiiiiiiiimmmmmeeee');
+                            date = '';
+                    }
+                    console.log('computed timestamp', date);
                     return {
-                        timestamp: timestamp,
+                        timestamp: date,
                         icon: icon,
                         userTo: userTo,
                         userFrom: userFrom,
