@@ -4,3 +4,4 @@ bower_components
 .tmp
 .publish/
 /node_modules
+design
