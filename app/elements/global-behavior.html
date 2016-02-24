@@ -8,7 +8,10 @@ var HeyJimmyBehaviors = HeyJimmyBehaviors || {};
 HeyJimmyBehaviors.GlobalBehavior = {
 
     properties: {
-
+        // loading: {
+        //     type: Boolean,
+        //     observer: 'loadingStateChanged'
+        // }
     },
 
     created: function() {
@@ -18,6 +21,12 @@ HeyJimmyBehaviors.GlobalBehavior = {
     ready: function () {
 
     },
+    // hide show the paper-progress
+    // loadingStateChanged: function(loading) {
+    //     var app = document.querySelector('#app');
+    //     app.set('isProgressDisabled', !loading);
+    // },
+
     // loop through user list and return users name
     // if we couldn't find it then just return the id
     userName: function(id, userList) {

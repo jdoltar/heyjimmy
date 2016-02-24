@@ -100,7 +100,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
                 <!-- Main Toolbar -->
                 <paper-toolbar id="mainToolbar" class="tall">
-                    <!-- <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button> -->
+                    <!-- <paper-icon-button id="<param name="" value="">perToggle" icon="menu" paper-drawer-toggle></paper-icon-button> -->
 
                     <span class="space"></span>
 
@@ -108,10 +108,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     <div class="middle middle-container">
                         <div class="app-name">
                             <div class="layout horizontal center">
-                                <!-- TODO: wrap img around div and set width of div so text doesn't move when img loads -->
-                                <!-- <img src="https://emoji.slack-edge.com/T02SDD19C/jimmy/3a8b1002c262353f.png"> -->
-                                <img src="images/jimmy-avatar.png" class="jimmy-avatar">
-                                <!-- <img src="images/jimmy-signia.png" class="jimmy-signia"> -->
+                                <div class="jimmy-avatar">
+                                    <img src="images/jimmy-avatar.png">
+                                </div>
                                 <div>Hey Jimmy! Leaderboard</div>
                             </div>
                         </div>
@@ -119,9 +118,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                     <!-- Application sub title -->
                     <div class="bottom bottom-container">
-                        <!-- <div class="bottom-title">And the Jimmy goes to...</div> -->
+                        <!-- <div class="bottom-title">Reward your teammates with Jimmy's ...or any other emoji</div> -->
                     </div>
                 </paper-toolbar>
+
+                <!-- <paper-progress indeterminate 
+                        id="toolbarProgress" 
+                        class="toolbar-progress"
+                        disabled$="[[isProgressDisabled]]">
+                </paper-progress> -->
 
                 <!-- Main Content -->
                 <div class="content">
@@ -159,9 +164,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </paper-scroll-header-panel>
         </paper-drawer-panel>
 
+
         <paper-toast id="toast">
             <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
         </paper-toast>
+
+
+        <paper-toast
+                id="toastSuccess"
+                text="{{successMessage}}"
+                duration="4000"
+                class="success-toast">
+        </paper-toast>
+
+        <paper-toast
+                id="toastError"
+                text="{{errorMessage}}"
+                duration="4000"
+                class="error-toast">
+        </paper-toast>
+
 
         <!-- Uncomment next block to enable Service Worker support (1/2) -->
         <!--

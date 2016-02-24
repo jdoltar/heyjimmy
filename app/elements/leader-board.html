@@ -19,8 +19,9 @@
         <!-- filter controls -->
         <div class="layout horizontal-reverse wrap start-justified mv-lg">
 
-            <paper-listbox class="layout horizontal" on-iron-select="dateFilterChanged"
-                            attr-for-selected="value" selected="{{timestamp}}">
+            <paper-listbox attr-for-selected="value"
+                           selected="{{timestamp}}"
+                           class="layout horizontal">
                 <paper-item value="today">Today</paper-item>
                 <paper-item value="week">Week</paper-item>
                 <paper-item value="month">Month</paper-item>
@@ -72,13 +73,14 @@
             </div>
 
             <paper-spinner active="{{loading}}" class="mr-lg"></paper-spinner>
+            <!-- <paper-spinner active="true" class="mr-lg"></paper-spinner> -->
 
         </div>
 
 
         <div class="layout vertical">
 
-            <template is="dom-repeat" items={{leaders}} as="leader">
+            <template is="dom-repeat" items={{leaders}} as="leader" rendered-item-count="{{itemCount}}">
                 <div class="layout horizontal center around-justified leader-row">
                     <div class="leader-rank">[[displayRank(index)]]</div>
                     <div class="leader-avatar"><img src$="[[userImage(leader.userTo, userList)]]"></div>
@@ -102,6 +104,10 @@
                     <div class="leader-badge-count">{{leader.badges.length}}</div>
                 </div>
                 
+            </template>
+
+            <template is="dom-if" if="[[isItemCountZero(itemCount)]]">
+                <div class="no-results">No results</div>
             </template>
         </div>
         <content></content>
@@ -139,21 +145,6 @@
                 debounce-duration="300"
                 loading="{{loading}}">
         </iron-ajax>
-
-
-        <paper-toast
-                id="toastSuccess"
-                text="{{successMessage}}"
-                duration="4000"
-                class="success-toast">
-        </paper-toast>
-
-        <paper-toast
-                id="toastError"
-                text="{{errorMessage}}"
-                duration="4000"
-                class="error-toast">
-        </paper-toast>
 
     </template>
     <script>
@@ -202,7 +193,7 @@
 
                 },
                 ready: function() {
-                    var that = this;
+
                 },
 
                 // Compute query parameters:
@@ -233,7 +224,6 @@
                         // anything else becomes 'all time' (no time constraint)
                         default:
                             // db will ignore date if its undefined
-                            console.log('allllllll tiiiiiiiiiiiiiiiiiimmmmmeeee');
                             date = '';
                     }
                     console.log('computed timestamp', date);
@@ -262,6 +252,9 @@
                     //data bind the array
                     this.set('emojiSet', emojiSet);
 
+                },
+                isItemCountZero: function(itemCount) {
+                    return !itemCount;
                 },
                 // html id's need to start with letter
                 toTemplateId: function(id) {
