@@ -1,15 +1,12 @@
-/* Jon Doltar
- * 2016-01
- * ESP-DLUX Base Station
- */
-
 'use strict';
 
 var _private = {};
 var _public = {};
 
-// node will run the HTTP server on this port
-_public.httpPort = 2999;
+_public.httpPort = 3010;
 _public.browserSyncProxyUrl = 'http://localhost:' + _public.httpPort;
+
+_public.datebaseUserName = 'heyjimmy';
+_public.databaseName = 'heyjimmy';
 
 module.exports = _public;
