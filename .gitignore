@@ -5,3 +5,4 @@ bower_components
 .publish/
 /node_modules
 design
+Thumbs.db

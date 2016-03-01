@@ -1,10 +1,10 @@
 var SlackBot = require('slackbots');
 var db = require('./db');
+var config = require ('../config')
 
 var Slack = require('slack-node');
-apiToken = "xoxp-21319597619-21323087526-21515344294-55cbf9602a";
  
-slack = new Slack(apiToken);
+slack = new Slack(config.slackApiToken);
  
  // get team name
  // all teams are isolated to their own instance
@@ -17,18 +17,18 @@ slack.api("team.info", function(err, response) {
  
 // create a bot 
 var bot = new SlackBot({
-    token: 'xoxb-21370371409-H0aysEJ2om6hYDVlKY0pw3OV', // Add a bot https://my.slack.com/services/new/bot and put the token  
-    name: 'testbot'
+    token: config.slackBotToken, // Add a bot https://my.slack.com/services/new/bot and put the token  
+    name: config.slackBotName
 });
  
 bot.on('start', function() {
     // more information about additional params https://api.slack.com/methods/chat.postMessage 
     var params = {
-        icon_emoji: ':cat:'
+        icon_emoji: ':jimmy:'
     };
     
     // define channel, where bot exist. You can adjust it there https://my.slack.com/services  
-    //bot.postMessageToChannel('general', 'hello world!', params);
+    bot.postMessageToChannel('general', 'hello world!', params);
     
     // define existing username instead of 'user_name' 
     //bot.postMessageToUser('jdoltar', 'hello jon!', params); 
@@ -54,6 +54,10 @@ bot.on('message', function(message) {
     }
     
 });
+
+function detectMention(message) {
+
+}
 
 
 // parse incoming message and detect if any badges are being given
@@ -152,6 +156,11 @@ module.exports.getUserList = function() {
 
     });
 }
+var userList;
+var botId;
+getUserList().then(function(data) {
+    userList = data;
+});
 
 module.exports.getChannelList = function() {
     return new Promise(function(resolve, reject){
