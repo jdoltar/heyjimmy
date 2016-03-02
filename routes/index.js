@@ -44,12 +44,12 @@ router.get('/badges', function(req, res, next) {
 });
 
 /* GET custom emoji list */
-router.get('/emoji-list', function(req, res, next) {
-    bot.getEmojiList().then(function(data) {
+router.get('/emoji-lists', function(req, res, next) {
+    bot.getEmojiLists().then(function(data) {
         res.send(data);
 
     }, function(err) {
-        console.log('could not get emoji list', err);
+        console.log('could not get emoji lists', err);
 
     });
 });

@@ -1,8 +1,9 @@
+var Slack = require('slack-node');
 var SlackBot = require('slackbots');
 var db = require('./db');
+var request = require('request');
 var config = require ('../config')
 
-var Slack = require('slack-node');
  
 slack = new Slack(config.slackApiToken);
  
@@ -28,7 +29,7 @@ bot.on('start', function() {
     };
     
     // define channel, where bot exist. You can adjust it there https://my.slack.com/services  
-    bot.postMessageToChannel('general', 'hello world!', params);
+    //bot.postMessageToChannel('general', 'hello world!', params);
     
     // define existing username instead of 'user_name' 
     //bot.postMessageToUser('jdoltar', 'hello jon!', params); 
@@ -137,7 +138,7 @@ getTeamInfo().then(function(info) {
     teamInfo = info;
 });
 
-module.exports.getEmojiList = function() {
+module.exports.getCustomEmojiList = function() {
     return new Promise(function(resolve, reject){
         slack.api("emoji.list", function(err, emojiList) {
             if(err) reject(err);
@@ -146,6 +147,49 @@ module.exports.getEmojiList = function() {
 
     });
 }
+
+var cssEmojiList;
+
+module.exports.getCssEmojiList = function() {
+    return new Promise(function(resolve, reject) {
+        // only compute list once. if we already did, send that
+        if (cssEmojiList) return resolve(cssEmojiList);
+
+        // css file location
+        var url = 'http://afeld.github.io/emoji-css/emoji.css';
+
+        // get emoji css file
+        request(url, function(error, response, body) {
+
+            // capture each time user award somebody badges in this message
+            var emojiCodeRegex = /\.em\-([a-zA-Z-0-9_]+)\{/g;
+
+            // find successive matches and push capture group to array
+            var matches  = [];
+            while ((result = emojiCodeRegex.exec(body)) !== null) {
+                matches.push(result[1]);
+            }
+            cssEmojiList = matches;
+            resolve(cssEmojiList);
+        });
+
+
+    });
+}
+
+module.exports.getEmojiLists = function() {
+    return Promise.all([module.exports.getCssEmojiList(), 
+                 module.exports.getCustomEmojiList()])
+    .then(function(result) { 
+        return Promise.resolve({
+            standard: result[0],
+            custom: result[1].emoji
+        });
+    }, function(reason) {
+        console.log(reason);
+    });
+}
+
 
 module.exports.getUserList = function() {
     return new Promise(function(resolve, reject){
@@ -158,7 +202,7 @@ module.exports.getUserList = function() {
 }
 var userList;
 var botId;
-getUserList().then(function(data) {
+module.exports.getUserList().then(function(data) {
     userList = data;
 });
 

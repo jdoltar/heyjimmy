@@ -50,7 +50,7 @@
                                 <emoji-icon
                                         class="mr-lg"
                                         icon="{{emoji}}"
-                                        emoji-list="{{customEmojiList.emoji}}">
+                                        emoji-lists="{{emojiLists}}">
                                 </emoji-icon>
                                 <div class="flex">:{{emoji}}:</div>
                             </div>
@@ -63,7 +63,7 @@
             <div class="emoji-filter-display self-end">
                 <emoji-icon
                         icon="{{icon}}"
-                        emoji-list="{{customEmojiList.emoji}}">
+                        emoji-lists="{{emojiLists}}">
                 </emoji-icon>
             </div>
             <div class="filter-button">
@@ -91,12 +91,27 @@
                             <emoji-icon
                                     id="[[toTemplateId(badge.id)]]"
                                     icon="{{badge.icon}}"
-                                    emoji-list="{{customEmojiList.emoji}}">
+                                    default-icon="grey_question"
+                                    emoji-lists="{{emojiLists}}">
                             </emoji-icon>
                             <paper-tooltip for="[[toTemplateId(badge.id)]]" position="bottom">
-                                <div>Awarded by: @[[userName(badge.userFrom, userList)]]</div>
-                                <div>In Channel: #[[channelName(badge.channel, channelList)]]</div>
-                                <div>Timestamp: [[formatTimestamp(badge.timestamp)]]</div>
+                                <div>
+                                    <span class="tooltip-label">Icon:</span>
+                                    <span class="tooltip-value">:[[badge.icon]]:</span>
+                                </div>
+                                <div>
+                                    <span class="tooltip-label">Awarded by:</span>
+                                    <span class="tooltip-value">@[[userName(badge.userFrom, userList)]]</span>
+                                </div>
+                                <div>
+                                    <span class="tooltip-label">In Channel:</span>
+                                    <span class="tooltip-value"> #[[channelName(badge.channel, channelList)]]</span>
+                                </div>
+                                <div>
+                                    <span class="tooltip-label">Timestamp:</span>
+                                    <span class="tooltip-value">[[formatTimestamp(badge.timestamp)]]</span>
+                                </div>
+
                             </paper-tooltip>
                             
                         </template>
@@ -123,9 +138,9 @@
         </iron-ajax>
 
         <iron-ajax auto method="GET"
-                url="/emoji-list"
+                url="/emoji-lists"
                 handle-as="json"
-                last-response="{{customEmojiList}}"
+                last-response="{{emojiLists}}"
                 debounce-duration="300"
                 loading="{{loading}}">
         </iron-ajax>

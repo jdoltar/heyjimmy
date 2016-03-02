@@ -40,61 +40,75 @@
         <content></content>
     </template>
     <script>
-        (function () {
-            'use strict';
+(function () {
+    'use strict';
 
-            Polymer({
-                is: 'emoji-icon',
-                properties: {
-                    // incoming icon code
-                    icon: {
-                        type: String
-                    },
-                    //computed code
-                    code: {
-                        type: String
-                    },
-                    emojiList: {
-                        type: Object
-                    },
-                    userList: {
-                        type: Array
-                    },
-                    isCustom: {
-                        type: Boolean,
-                        computed: 'processIcon(icon, emojiList)'
+    Polymer({
+        is: 'emoji-icon',
+        properties: {
+            // incoming icon code
+            icon: {
+                type: String
+            },
+            // fallback to this icon if not found
+            defaultIcon: {
+                type: String,
+                value: ''
+            },
+            //computed code
+            code: {
+                type: String
+            },
+            emojiLists: {
+                type: Object
+            },
+            userList: {
+                type: Array
+            },
+            isCustom: {
+                type: Boolean,
+                computed: 'processIcon(icon, emojiLists)'
+            }
+        },
+        created: function () {
+
+        },
+        ready: function () {
+            var that = this;
+        },
+        processIcon: function(icon, emojiLists) {
+            //check if icon exists in the custom emoji list
+            var keys = Object.keys(emojiLists.custom);
+
+            for(var i = 0; i < keys.length; i++) {
+                if(keys[i] === icon) {
+                    var url = emojiLists.custom[keys[i]];
+                    // check if this is just an alias
+                    if(url.indexOf('alias') > 0) {
+                        // remove alias label (first six characters)
+                        this.set('code', url.substr(6));
+                        return false;
                     }
-                },
-                created: function () {
-
-                },
-                ready: function () {
-                    var that = this;
-                },
-                processIcon: function(icon, emojiList) {
-                    //check if icon exists in the custom emoji list
-                    var keys = Object.keys(emojiList);
-
-                    for(var i = 0; i< keys.length; i++) {
-                        if(keys[i] === icon) {
-                            var url = emojiList[keys[i]];
-                            // check if this is just an alias
-                            if(url.indexOf('alias') > 0) {
-                                // remove alias label (first six characters)
-                                this.set('code', url.substr(6));
-                                return false;
-                            }
-                            // not an alias, set url;
-                            this.set('code', url);
-                            return true;
-                        }
-                    }
-                    // icon is not custom, use emoji css library
-                    this.set('code', icon);
-                    return false;
-
+                    // not an alias, set url;
+                    this.set('code', url);
+                    return true;
                 }
-            });
-        })();
+            }
+            // icon is not custom, use emoji css library
+            // check if this icon exists in css lib
+            // use default emoji for emojis that aren't found
+            var iconToSet = this.defaultIcon;
+            for (var i = 0; i < emojiLists.standard.length; i++) {
+                if(emojiLists.standard[i] === icon) {
+                    // icon exists in css lib, use it
+                    iconToSet = icon;
+                }
+            }
+            this.set('code', iconToSet);
+            return false;
+
+        }
+    });
+})();
     </script>
 </dom-module>
