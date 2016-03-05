@@ -256,5 +256,34 @@ db.getLeaders = function(params) {
     });
 };
 
+// This gets data to be displayed in filter dropdowns
+// It consists of all possible emojis and awarders for given timeframe
+db.getFilterValues = function(params) {
+    var awarders = [];
+    var icons = [];
+
+    return db.getLeaders(params).then(function(leaders) {
+        // iterate through all badges and collapse into a 
+        // unique list of awarders and icons
+        leaders.forEach(function(leader) {
+            leader.badges.forEach(function(badge) {
+                if(awarders.indexOf(badge.userFrom) < 0) {
+                    awarders.push(badge.userFrom);
+                }
+                if(icons.indexOf(badge.icon) < 0) {
+                    icons.push(badge.icon);
+                }
+            });
+        });
+        return Promise.resolve({
+            awarders: awarders,
+            icons: icons
+        })
+
+    });
+
+
+};
+
 
 module.exports = db;

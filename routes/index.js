@@ -31,6 +31,23 @@ router.get('/leaders', function(req, res, next) {
         });
 });
 
+/* GET dropdown filter values */
+router.get('/filter-values', function(req, res, next) {
+    var timestamp;
+    if(req.query.timestamp) timestamp = new Date(req.query.timestamp);
+
+    db.getFilterValues({
+        timestamp: timestamp,
+        team: req.query.team
+    })
+        .then(function(data) {
+            res.send(data);
+
+        }, function(err) {
+            console.log('could not get filter values', err);
+        });
+});
+
 /* GET badges */
 router.get('/badges', function(req, res, next) {
 

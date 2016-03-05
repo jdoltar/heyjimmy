@@ -43,7 +43,7 @@
                     <paper-menu id="emojiSelectMenu" class="dropdown-content"
                                 attr-for-selected="value" selected="{{icon}}">
                         <paper-item value="">No filter</paper-item>
-                        <template is="dom-repeat" as="emoji" items="{{emojiSet}}">
+                        <template is="dom-repeat" as="emoji" items="{{filterValues.icons}}">
                             <paper-item value="{{emoji}}">
                                 <div class="layout horizontal center">
                                     <emoji-icon
@@ -63,8 +63,8 @@
                     <paper-menu id="awarderSelectMenu" class="dropdown-content"
                                 attr-for-selected="value" selected="{{userFrom}}">
                         <paper-item value="">No filter</paper-item>
-                        <template is="dom-repeat" items="{{userList}}" as="awarder">
-                            <paper-item value="{{awarder.id}}">[[userName(awarder.id, userList)]]</paper-item>
+                        <template is="dom-repeat" items="{{filterValues.awarders}}" as="awarderId">
+                            <paper-item value="{{awarderId}}">[[userName(awarderId, userList)]]</paper-item>
                         </template>
                     </paper-menu>
                 </paper-dropdown-menu>
@@ -149,6 +149,15 @@
         </iron-ajax>
 
         <iron-ajax auto method="GET"
+                url="/filter-values"
+                params="{{filterValueParams}}"
+                handle-as="json"
+                last-response="{{filterValues}}"
+                debounce-duration="300"
+                loading="{{loading}}">
+        </iron-ajax>
+
+        <iron-ajax auto method="GET"
                 url="/emoji-lists"
                 handle-as="json"
                 last-response="{{emojiLists}}"
@@ -189,10 +198,15 @@
                         type: Object,
                         observer: 'leadersChanged'
                     },
-                    // used by iron-ajax to submit query params
+                    // used by iron-ajax to submit query params for leaders
                     leaderParams: {
                         type: Object,
                         computed: 'computeLeaderParams(timestamp, icon, userTo, userFrom, team)',
+                    },
+                    // used by iron-ajax to submit query params for filter values
+                    filterValueParams: {
+                        type: Object,
+                        computed: 'computeFilterValueParams(timestamp, team)',
                     },
                     timestamp: {
                         type: Object,
@@ -252,7 +266,6 @@
                             // db will ignore date if its undefined
                             date = '';
                     }
-                    console.log('computed timestamp', date);
                     return {
                         timestamp: date,
                         icon: icon,
@@ -262,21 +275,38 @@
                     };
                 },
 
+
+                // This function acts as a trigger. If any of the parameters
+                // change then this will fire, which in turn causes iron-ajax
+                // to reload.
+                computeFilterValueParams: function(timestamp, team) {
+
+                    // convert today, month, week aliases to actual dates
+                    var date = new Date();
+                    //all dates are at midnight
+                    date.setHours(0, 0, 0, 0);
+                    switch(timestamp) {
+                        case 'today':
+                            break;
+                        case 'week':
+                            date.setDate(date.getDate() - date.getDay()); 
+                            break;
+                        case 'month':
+                            date.setDate(1);
+                            break;
+                        // anything else becomes 'all time' (no time constraint)
+                        default:
+                            // db will ignore date if its undefined
+                            date = '';
+                    }
+                    return {
+                        timestamp: date,
+                        team: team,
+                    };
+                },
+
                 leadersChanged: function(leaders) {
-                    console.log('leaders', leaders);
-
-                    // cycle through leaders and get a set of all emojis used
-                    var emojiSet = [];
-                    leaders.forEach(function(leader) {
-                        leader.badges.forEach(function(badge) {
-                            emojiSet.push(badge.icon);
-                        });
-                    });
-                    // remove duplicates in the set
-                    emojiSet = this.toUniqueSet(emojiSet);
-
-                    //data bind the array
-                    this.set('emojiSet', emojiSet);
+                    //console.log('leaders', leaders);
 
                 },
                 isItemCountZero: function(itemCount) {
