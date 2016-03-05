@@ -28,49 +28,54 @@
                 <paper-item value="">All Time</paper-item>
             </paper-listbox>
 
-            <!-- userFrom filter (awarder) -->
-            <paper-dropdown-menu label="Filter by awarder" class="filter-field mh">
-                <paper-menu id="awarderSelectMenu" class="dropdown-content"
-                            attr-for-selected="value" selected="{{userFrom}}">
-                    <paper-item value="">No filter</paper-item>
-                    <template is="dom-repeat" items="{{userList}}" as="awarder">
-                        <paper-item value="{{awarder.id}}">[[userName(awarder.id, userList)]]</paper-item>
-                    </template>
-                </paper-menu>
-            </paper-dropdown-menu>
+            <div class="layout horizontal center">
 
-            <!-- icon filter -->
-            <paper-dropdown-menu label="Filter by emoji" class="filter-field mh">
-                <paper-menu id="emojiSelectMenu" class="dropdown-content"
-                            attr-for-selected="value" selected="{{icon}}">
-                    <paper-item value="">No filter</paper-item>
-                    <template is="dom-repeat" as="emoji" items="{{emojiSet}}">
-                        <paper-item value="{{emoji}}">
-                            <div class="layout horizontal center">
-                                <emoji-icon
-                                        class="mr-lg"
-                                        icon="{{emoji}}"
-                                        emoji-lists="{{emojiLists}}">
-                                </emoji-icon>
-                                <div class="flex">:{{emoji}}:</div>
-                            </div>
-                        </paper-item>
-                    </template>
-                </paper-menu>
-            </paper-dropdown-menu>
+                <!-- Display the selected emoji filter -->
+                <div class="emoji-filter-display">
+                    <emoji-icon
+                            icon="{{icon}}"
+                            emoji-lists="{{emojiLists}}">
+                    </emoji-icon>
+                </div>
 
-            <!-- Display the selected emoji filter -->
-            <div class="emoji-filter-display self-end">
-                <emoji-icon
-                        icon="{{icon}}"
-                        emoji-lists="{{emojiLists}}">
-                </emoji-icon>
+                <!-- icon filter -->
+                <paper-dropdown-menu label="Filter by emoji" class="filter-dd mh flex">
+                    <paper-menu id="emojiSelectMenu" class="dropdown-content"
+                                attr-for-selected="value" selected="{{icon}}">
+                        <paper-item value="">No filter</paper-item>
+                        <template is="dom-repeat" as="emoji" items="{{emojiSet}}">
+                            <paper-item value="{{emoji}}">
+                                <div class="layout horizontal center">
+                                    <emoji-icon
+                                            class="mr-lg"
+                                            icon="{{emoji}}"
+                                            emoji-lists="{{emojiLists}}">
+                                    </emoji-icon>
+                                    <div class="flex">:{{emoji}}:</div>
+                                </div>
+                            </paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-dropdown-menu>
+
+                <!-- userFrom filter (awarder) -->
+                <paper-dropdown-menu label="Filter by awarder" class="filter-dd mh flex">
+                    <paper-menu id="awarderSelectMenu" class="dropdown-content"
+                                attr-for-selected="value" selected="{{userFrom}}">
+                        <paper-item value="">No filter</paper-item>
+                        <template is="dom-repeat" items="{{userList}}" as="awarder">
+                            <paper-item value="{{awarder.id}}">[[userName(awarder.id, userList)]]</paper-item>
+                        </template>
+                    </paper-menu>
+                </paper-dropdown-menu>
             </div>
-            <div class="filter-button">
+
+
+            <!-- <div class="filter-button">
                 <paper-button class="mb-lg mr" on-tap="clearFilters">
                     Clear filters
                 </paper-button>
-            </div>
+            </div> -->
 
             <paper-spinner active="{{loading}}" class="mr-lg"></paper-spinner>
             <!-- <paper-spinner active="true" class="mr-lg"></paper-spinner> -->
@@ -81,42 +86,48 @@
         <div class="layout vertical">
 
             <template is="dom-repeat" items={{leaders}} as="leader" rendered-item-count="{{itemCount}}">
-                <div class="layout horizontal center around-justified leader-row">
+                <div class="layout horizontal center leader-row wrap">
                     <div class="leader-rank">[[displayRank(index)]]</div>
                     <div class="leader-avatar"><img src$="[[userImage(leader.userTo, userList)]]"></div>
                     <div class="leader-name">@[[userName(leader.userTo, userList)]]</div>
                     
-                    <div class="flex">
-                        <template is="dom-repeat" items={{leader.badges}} as="badge">
-                            <emoji-icon
-                                    id="[[toTemplateId(badge.id)]]"
-                                    icon="{{badge.icon}}"
-                                    default-icon="grey_question"
-                                    emoji-lists="{{emojiLists}}">
-                            </emoji-icon>
-                            <paper-tooltip for="[[toTemplateId(badge.id)]]" position="bottom">
-                                <div>
-                                    <span class="tooltip-label">Icon:</span>
-                                    <span class="tooltip-value">:[[badge.icon]]:</span>
-                                </div>
-                                <div>
-                                    <span class="tooltip-label">Awarded by:</span>
-                                    <span class="tooltip-value">@[[userName(badge.userFrom, userList)]]</span>
-                                </div>
-                                <div>
-                                    <span class="tooltip-label">In Channel:</span>
-                                    <span class="tooltip-value"> #[[channelName(badge.channel, channelList)]]</span>
-                                </div>
-                                <div>
-                                    <span class="tooltip-label">Timestamp:</span>
-                                    <span class="tooltip-value">[[formatTimestamp(badge.timestamp)]]</span>
-                                </div>
+                    <div class="flex badge-column">
+                        <div class="layout horizontal center">
+                            <div class="flex">
+                                <template is="dom-repeat" items={{leader.badges}} as="badge">
+                                    <emoji-icon
+                                            id="[[toTemplateId(badge.id)]]"
+                                            icon="{{badge.icon}}"
+                                            default-icon="grey_question"
+                                            emoji-lists="{{emojiLists}}">
+                                    </emoji-icon>
+                                    <paper-tooltip for="[[toTemplateId(badge.id)]]" position="bottom">
+                                        <div>
+                                            <span class="tooltip-label">Icon:</span>
+                                            <span class="tooltip-value">:[[badge.icon]]:</span>
+                                        </div>
+                                        <div>
+                                            <span class="tooltip-label">Awarded by:</span>
+                                            <span class="tooltip-value">@[[userName(badge.userFrom, userList)]]</span>
+                                        </div>
+                                        <div>
+                                            <span class="tooltip-label">In Channel:</span>
+                                            <span class="tooltip-value"> #[[channelName(badge.channel, channelList)]]</span>
+                                        </div>
+                                        <div>
+                                            <span class="tooltip-label">Timestamp:</span>
+                                            <span class="tooltip-value">[[formatTimestamp(badge.timestamp)]]</span>
+                                        </div>
 
-                            </paper-tooltip>
-                            
-                        </template>
+                                    </paper-tooltip>
+                                    
+                                </template>
+                            </div>
+                            <div class="leader-badge-count flex-none self-end">{{leader.badges.length}}</div>
+                        </div>
                     </div>
-                    <div class="leader-badge-count">{{leader.badges.length}}</div>
+
+                    
                 </div>
                 
             </template>

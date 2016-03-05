@@ -1,5 +1,6 @@
 var Slack = require('slack-node');
 var SlackBot = require('slackbots');
+var Botkit = require('botkit');
 var db = require('./db');
 var request = require('request');
 var config = require ('../config')
@@ -21,12 +22,19 @@ var bot = new SlackBot({
     token: config.slackBotToken, // Add a bot https://my.slack.com/services/new/bot and put the token  
     name: config.slackBotName
 });
+
+var botId;
  
 bot.on('start', function() {
     // more information about additional params https://api.slack.com/methods/chat.postMessage 
     var params = {
         icon_emoji: ':jimmy:'
     };
+
+    bot.getUser('heyjimmy').then(function(user) {
+        botId = user.id;
+        console.log('botId', botId);
+    });
     
     // define channel, where bot exist. You can adjust it there https://my.slack.com/services  
     //bot.postMessageToChannel('general', 'hello world!', params);
@@ -45,18 +53,25 @@ bot.on('message', function(message) {
     // bot.postMessageToChannel('general', message.text, params);
 
 
+    
+
+
+
     // check if message has text
     // TODO check if message was edited or not
     if(message.text) {
         // process message and get a list of jobs, users awarding badges
         var badges = extractBadges(message)
         db.saveBadges(badges);
+
+        detectMention(message);
         
     }
     
 });
 
 function detectMention(message) {
+
 
 }
 
@@ -214,4 +229,80 @@ module.exports.getChannelList = function() {
         });
 
     });
+}
+
+
+var controller = Botkit.slackbot({
+ debug: false
+});
+
+controller.spawn({
+  token: config.slackBotToken
+}).startRTM(function(err) {
+  if (err) {
+    throw new Error(err);
+  }
+});
+
+
+var getRandomItem = function(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+controller.hears(['leaderboard'],
+            ['direct_message','direct_mention','mention'],
+            function(bot,message) {
+
+    bot.reply(message,"http://heyjimmy.codeletting.com/");
+
+});
+
+var danceGifs = [
+    'https://media.giphy.com/media/2iODRXAkSdX0s/giphy.gif',
+    'https://media.giphy.com/media/F5DgwU1yJAGM8/giphy.gif',
+    'https://media.giphy.com/media/VgYKTviMUEhPy/giphy.gif',
+    'https://media.giphy.com/media/iNUq5rs9KSrFm/giphy.gif',
+    'https://media.giphy.com/media/6RyseGuz5TNiE/giphy.gif'
+];
+
+controller.hears(['dance'],
+            ['direct_message','direct_mention','mention'],
+            function(bot,message) {
+
+    bot.reply(message, getRandomItem(danceGifs));
+
+});
+
+controller.hears(['open the pod bay doors'],
+            ['direct_message','direct_mention','mention', 'ambient'],
+            function(bot,message) {
+
+    bot.reply(message, 'I\'m sorry, Dave. I\'m afraid I can\'t do that.');
+
+});
+
+
+controller.hears(['pizzatime'],['ambient'],function(botk,message) {
+  botk.startConversation(message, askFlavor);
+});
+
+askFlavor = function(response, convo) {
+  convo.ask("What flavor of pizza do you want?", function(response, convo) {
+    convo.say("Awesome.");
+    askSize(response, convo);
+    convo.next();
+  });
+}
+askSize = function(response, convo) {
+  convo.ask("What size do you want?", function(response, convo) {
+    convo.say("Ok.")
+    askWhereDeliver(response, convo);
+    convo.next();
+  });
+}
+askWhereDeliver = function(response, convo) { 
+  convo.ask("So where do you want it delivered?", function(response, convo) {
+    convo.say("Ok! Good by.");
+    convo.next();
+  });
 }
