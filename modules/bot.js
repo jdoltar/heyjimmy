@@ -7,10 +7,6 @@ var config = require ('../config')
 
  
 slack = new Slack(config.slackApiToken);
- 
- // get team name
- // all teams are isolated to their own instance
- // all in same db collection though
 
 var teamId; 
 slack.api("team.info", function(err, response) {
@@ -36,50 +32,24 @@ bot.on('start', function() {
         console.log('botId', botId);
     });
     
-    // define channel, where bot exist. You can adjust it there https://my.slack.com/services  
-    //bot.postMessageToChannel('general', 'hello world!', params);
-    
-    // define existing username instead of 'user_name' 
-    //bot.postMessageToUser('jdoltar', 'hello jon!', params); 
-    
-    // define private group instead of 'private_group', where bot exist 
-    //bot.postMessageToGroup('private_group', 'meow!', params); 
 });
 
 bot.on('message', function(message) {
-    // var params = {
-    //     icon_emoji: ':cat:'
-    // };
-    // bot.postMessageToChannel('general', message.text, params);
 
-
-    
-
-
-
-    // check if message has text
-    // TODO check if message was edited or not
-    if(message.text) {
+    // check if message has text and is not a replay (reply_to)
+    if(message.text && message.reply_to === undefined) {
         // process message and get a list of jobs, users awarding badges
         var badges = extractBadges(message)
-        db.saveBadges(badges);
-
-        detectMention(message);
-        
+        if(badges.length) db.saveBadges(badges);        
     }
     
 });
 
-function detectMention(message) {
-
-
-}
-
-
 // parse incoming message and detect if any badges are being given
 function extractBadges(message) {
+    console.log('message', message);
     // capture each time user award somebody badges in this message
-    var candidatesRegex = /\B<@(?:[a-zA-Z0-9]+)>\:?\s*(?:(?:\s*\:[a-zA-Z0-9_-]+\:\s*)*)/g;
+    var candidatesRegex = /\B<@(?:[a-zA-Z0-9]+)>\:?\s*(?:(?:\s*\:[a-zA-Z0-9_-]+\:\s*)+)/g;
     var candidates = message.text.match(candidatesRegex);
 
     // if no one awarded someone in this message, just return an empty array
@@ -87,7 +57,7 @@ function extractBadges(message) {
     if(!candidates) return badges;
     candidates.forEach(function(candidate) {
         // separate username and badges from entire capture
-        var splitCandidateRegex = /\B<@([a-zA-Z0-9]+)>\:?\s*((?:\s*\:[a-zA-Z0-9_-]+\:\s*)*)/g;
+        var splitCandidateRegex = /\B<@([a-zA-Z0-9]+)>\:?\s*((?:\s*\:[a-zA-Z0-9_-]+\:\s*)+)/g;
         var match = splitCandidateRegex.exec(candidate);
         if(match) {
             // remove white space from badge string
