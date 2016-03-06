@@ -49,6 +49,7 @@
                                     <emoji-icon
                                             class="mr-lg"
                                             icon="{{emoji}}"
+                                            default-icon="grey_question"
                                             emoji-lists="{{emojiLists}}">
                                     </emoji-icon>
                                     <div class="flex">:{{emoji}}:</div>
@@ -83,15 +84,15 @@
         </div>
 
 
-        <div class="layout vertical">
+        <div class="layout vertica">
 
             <template is="dom-repeat" items={{leaders}} as="leader" rendered-item-count="{{itemCount}}">
-                <div class="layout horizontal center leader-row wrap">
-                    <div class="leader-rank">[[displayRank(index)]]</div>
-                    <div class="leader-avatar"><img src$="[[userImage(leader.userTo, userList)]]"></div>
-                    <div class="leader-name">@[[userName(leader.userTo, userList)]]</div>
+                <div class="layout horizontal center wrap leader-row">
+                    <div class="leader-rank flex-none">[[displayRank(index)]]</div>
+                    <div class="leader-avatar flex-none"><img src$="[[userImage(leader.userTo, userList)]]"></div>
+                    <div class="leader-name flex-none">@[[userName(leader.userTo, userList)]]</div>
                     
-                    <div class="flex badge-column">
+                    <div class="badge-column flex">
                         <div class="layout horizontal center">
                             <div class="flex">
                                 <template is="dom-repeat" items={{leader.badges}} as="badge">

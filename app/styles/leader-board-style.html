@@ -39,6 +39,17 @@
 
             }
 
+            /*mobile safari only*/
+            @supports (-webkit-text-size-adjust:none) and (not (-ms-accelerator:true))
+            and (not (-moz-appearance:none))
+            {
+
+                .badge-column {
+                    -webkit-flex-basis: 340px;
+                }
+
+            }
+
             .no-results {
                 font-size: 1.5em;
                 font-weight: bold;
@@ -57,13 +68,15 @@
             }
 
             .leader-avatar {
-                
+                height: 55px;
+                width: 55px;
+                min-width: 55px;
+                margin-top: 5px;
             }
 
             .leader-avatar img {
                 height: 55px;
                 width: 55px;
-                margin-top: 5px;
             }
 
             .leader-rank {
@@ -72,6 +85,7 @@
                 color: rgba(55, 55, 55, 0.8);
                 text-align: center;
                 width: 55px;
+                min-width: 55px;
             }
 
             .leader-name {
@@ -80,6 +94,7 @@
                 color: rgba(55, 55, 55, 0.8);
                 text-align: left;
                 width: 150px;
+                min-width: 150px;
                 padding-left: 10px;
             }
 
@@ -88,6 +103,7 @@
                 color: rgba(55, 55, 55, 0.8);
                 text-align: center;
                 width: 55px;
+                min-width: 55px;
             }
 
             
@@ -126,6 +142,11 @@
 
             .badge-column {
                 min-width: 340px;
+                margin-top: 5px;
+            }
+
+            .badge-column emoji-icon {
+                margin-bottom: 2px;
             }
 
             .filter-dd {

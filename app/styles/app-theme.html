@@ -107,6 +107,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     #mainToolbar {
         --paper-toolbar-background: #AB5F26;
+        --paper-toolbar-sm-height: 64px;
     }
 
     #mainToolbar.tall .app-name {
@@ -144,8 +145,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     .jimmy-avatar {
         width: 87px;
-        margin-right: 15px;
+        /*margin-right: 15px;*/
     }
+
+    .toolbar-text {
+        margin-left: 15px;
+    }
+
+
+
     /* Height of the scroll area */
     .content {
         height: 900px;
@@ -217,6 +225,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         #drawer .paper-toolbar {
             margin-left: 16px;
+        }
+
+        #mainToolbar .middle-container  {
+            height: 100%;
+            margin-left: 0px;
         }
 
         #mainToolbar.tall .app-name {
