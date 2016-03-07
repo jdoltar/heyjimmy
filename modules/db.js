@@ -79,7 +79,7 @@ db.checkGiveCount = function(badge) {
                         console.log('result.rowCount', result.rowCount);
                         // if user is allowed to give more badges
                         // then resolve the badge
-                        if(result.rowCount < 5000000) {
+                        if(result.rowCount < 5) {
                             return resolve(badge);
                         }
                         // otherwise resolve empty object so
