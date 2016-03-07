@@ -8,8 +8,9 @@
 
 <!-- External styles for this element -->
 <link rel="import" href="../styles/leader-board-style.html">
-<link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+<!-- <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet"> -->
 
+<link href="../styles/emoji-apple-72.css" rel="stylesheet">
 
 <dom-module id="emoji-icon">
     <!-- Include the external styles for this element -->
@@ -25,7 +26,7 @@
             height: 24px;
             display: inline-block;
             position: relative;
-            top: 8px;
+            top: 2px;
             display: block;
             margin: auto;
         }
@@ -34,7 +35,7 @@
     <template>
 
         <template is="dom-if" if="[[!isCustom]]">
-            <span class$="em em-{{code}}"></span>
+            <span class$="em em-a-{{code}}"></span>
         </template>
 
         <template is="dom-if" if="[[isCustom]]">

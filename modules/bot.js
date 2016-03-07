@@ -3,10 +3,11 @@ var SlackBot = require('slackbots');
 var Botkit = require('botkit');
 var db = require('./db');
 var request = require('request');
-var config = require ('../config')
+var config = require ('../config');
+var fs = require('fs');
 
  
-slack = new Slack(config.slackApiToken);
+var slack = new Slack(config.slackApiToken);
 
 var teamId; 
 slack.api("team.info", function(err, response) {
@@ -134,24 +135,23 @@ module.exports.getCustomEmojiList = function() {
 }
 
 var cssEmojiList;
-
 module.exports.getCssEmojiList = function() {
     return new Promise(function(resolve, reject) {
         // only compute list once. if we already did, send that
         if (cssEmojiList) return resolve(cssEmojiList);
 
         // css file location
-        var url = 'http://afeld.github.io/emoji-css/emoji.css';
+        var filename = 'app/styles/emoji-apple-72.css';
 
         // get emoji css file
-        request(url, function(error, response, body) {
-
+        //request(url, function(error, response, body) {
+        fs.readFile(filename, 'utf8', function(err, css) {
             // capture each time user award somebody badges in this message
-            var emojiCodeRegex = /\.em\-([a-zA-Z-0-9_]+)\{/g;
+            var emojiCodeRegex = /\.em\-a\-([a-zA-Z-0-9_]+)\{/g;
 
             // find successive matches and push capture group to array
             var matches  = [];
-            while ((result = emojiCodeRegex.exec(body)) !== null) {
+            while ((result = emojiCodeRegex.exec(css)) !== null) {
                 matches.push(result[1]);
             }
             cssEmojiList = matches;
@@ -166,6 +166,7 @@ module.exports.getEmojiLists = function() {
     return Promise.all([module.exports.getCssEmojiList(), 
                  module.exports.getCustomEmojiList()])
     .then(function(result) { 
+        console.log('css emojis found', result[0].length);
         return Promise.resolve({
             standard: result[0],
             custom: result[1].emoji
