@@ -252,8 +252,16 @@ controller.hears(['open the pod bay doors'],
 
 });
 
+controller.hears(['joke'],
+            ['direct_message','direct_mention','mention'],
+            function(bot,message) {
 
-controller.hears(['pizzatime'],['ambient'],function(botk,message) {
+    bot.reply(message, 'I was going to tell you a joke about pizza but never mind, it\'s too cheesy');
+
+});
+
+
+controller.hears(['pizzatime'],['mention', 'direct_mention'],function(botk,message) {
   botk.startConversation(message, askFlavor);
 });
 
@@ -273,7 +281,8 @@ askSize = function(response, convo) {
 }
 askWhereDeliver = function(response, convo) { 
   convo.ask("So where do you want it delivered?", function(response, convo) {
-    convo.say("Ok! Good by.");
+    convo.say("Ok! Coming right up!");
+    convo.say(":p-pizza:");
     convo.next();
   });
 }
