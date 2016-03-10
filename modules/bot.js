@@ -244,6 +244,18 @@ controller.hears(['dance'],
 
 });
 
+// the pattern input is a string of a regex and not a regex
+// so that means we have to escape the escape character so
+// it shows up literally on the string and thus is interpretted
+// by the regex as the escape character (only one of them)
+controller.hears(['\\bwhat\\b.*\\bwear\\b'],
+            ['direct_message','direct_mention','mention'],
+            function(bot,message) {
+
+    bot.reply(message, 'jeans and an Advisor LaunchPLAID shirt, duh');
+
+});
+
 controller.hears(['open the pod bay doors'],
             ['direct_message','direct_mention','mention', 'ambient'],
             function(bot,message) {
