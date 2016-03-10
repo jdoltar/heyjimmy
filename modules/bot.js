@@ -273,27 +273,28 @@ controller.hears(['joke'],
 });
 
 
-controller.hears(['pizzatime'],['mention', 'direct_mention'],function(botk,message) {
+controller.hears(['pizza'],['direct_message','mention', 'direct_mention'],function(botk,message) {
   botk.startConversation(message, askFlavor);
 });
 
 askFlavor = function(response, convo) {
-  convo.ask("What flavor of pizza do you want?", function(response, convo) {
-    convo.say("Awesome.");
+  convo.ask("pizza eh???? what kind do you want?", function(response, convo) {
+    convo.say("awesome");
+    convo.say("great choice");
     askSize(response, convo);
     convo.next();
   });
 }
 askSize = function(response, convo) {
-  convo.ask("What size do you want?", function(response, convo) {
-    convo.say("Ok.")
+  convo.ask("what size do you want?", function(response, convo) {
+    convo.say("dope")
     askWhereDeliver(response, convo);
     convo.next();
   });
 }
 askWhereDeliver = function(response, convo) { 
-  convo.ask("So where do you want it delivered?", function(response, convo) {
-    convo.say("Ok! Coming right up!");
+  convo.ask("where do you want it delivered?", function(response, convo) {
+    convo.say("ok! coming right up!");
     convo.say(":p-pizza:");
     convo.next();
   });
