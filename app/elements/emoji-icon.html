@@ -39,7 +39,7 @@
         </template>
 
         <template is="dom-if" if="[[isCustom]]">
-            <img src$="{{code}}">
+            <img src$="{{url}}">
         </template>
 
 
@@ -67,6 +67,9 @@
             code: {
                 type: String
             },
+            url: {
+                type: String
+            },
             emojiLists: {
                 type: Object
             },
@@ -75,6 +78,7 @@
             },
             isCustom: {
                 type: Boolean,
+                value: false,
                 computed: 'processIcon(icon, emojiLists)'
             }
         },
@@ -98,7 +102,7 @@
                         return false;
                     }
                     // not an alias, set url;
-                    this.set('code', url);
+                    this.set('url', url);
                     return true;
                 }
             }
