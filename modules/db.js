@@ -68,11 +68,17 @@ db.checkGiveCount = function(badge) {
         var date = new Date();
         date.setHours(0,0,0,0);
 
+        // generate where clause
+        var where = db.generateWhereClause({
+            userFrom: badge.userFrom,
+            timestamp: date
+        });
+
         // get a client from the connection pool
         pg.connect(conn_obj, function(err, client, done) {
             if (err) return reject(err);
             client.query('SELECT user_from AS "userFrom" '
-                    + 'FROM badges WHERE timestamp > $1', [date],
+                    + 'FROM badges ' + where.filter, where.args,
                 function(err, result) {
                     done();
                     if (!err) {
