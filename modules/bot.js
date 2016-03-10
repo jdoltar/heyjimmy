@@ -256,6 +256,17 @@ controller.hears(['\\bwhat\\b.*\\bwear\\b'],
 
 });
 
+controller.hears(['\\bhow much\\b.*\\brent\\b'],
+            ['direct_message','direct_mention','mention'],
+            function(bot,message) {
+
+    bot.reply(message, 'http://giphy.com/gifs/1BXa2alBjrCXC');
+    bot.reply(message, 'too much');
+	
+
+});
+
+
 controller.hears(['open the pod bay doors'],
             ['direct_message','direct_mention','mention', 'ambient'],
             function(bot,message) {
